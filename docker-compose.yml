@@ -1,0 +1,9 @@
+services:
+  x86dev: 
+    image: x86dev               # name of image
+    # platform: linux/amd64     # architecture
+    volumes:
+      - .:/workspace            # mount current directory into workspace
+    working_dir: /workspace
+    tty: true                   # allocates terminal
+    stdin_open: true            # keeps stdin open
