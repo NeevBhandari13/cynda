@@ -5,59 +5,53 @@
 
 Tokeniser::Tokeniser(const std::string& src)
     : m_src(src) // member initialiser list, has to be used for const variable
-    {}
+    {
+        
+    }
 
 std::vector<Token> Tokeniser::tokenise() {
     std::vector<Token> tokens{};
     std::string buf{};
 
-    for (int i = 0; i < m_src.length(); i++) {
-        char start = m_src.at(i);
-        // check for identifier
-        // make sure the first character is an alphabet
-        if (std::isalpha(start)) {
-            // rest of identifier can be alphanumeric
-            while (i < m_src.length() && std::isalnum(m_src.at(i))) {
-                buf += m_src.at(i);
-                i++;
+    while (peek().has_value()) {
+        // keyword case
+        if (std::isalpha(peek().value())) {
+            buf.push_back(consume());
+            while (peek().has_value() && std::isalnum(peek().value())) {
+                buf.push_back(consume());
             }
-            // bring back 1 to account for for loop incrementation
-            i--;
-            
             if (buf == "return") {
                 Token tok{.type = TokenType::_return};
                 tokens.push_back(tok);
             } else {
-                std::cerr << "INVALID TOKEN!" << std::endl;
+                std::cerr << "INVALID TOKEN! " << buf << std::endl;
                 // exits with error code 1
                 exit(1);
             }
-            
-        } else if(std::isdigit(start)) {
-            // if number, get all digits
-            while (std::isdigit(m_src.at(i))) {
-                buf.push_back(m_src.at(i));
-                i++;
+        // integer literal case
+        } else if (std::isdigit(peek().value())) {
+            buf.push_back(consume());
+            while (peek().has_value() && std::isdigit(peek().value())) {
+                buf.push_back(consume());
             }
-            // bring back 1 to account for for loop incrementation
-            i--;
-
             Token tok{.type = TokenType::int_lit, .value = buf};
             tokens.push_back(tok);
-        } else if (ispunct(start)) {
+        } else if (std::ispunct(peek().value())) {
+            buf.push_back(consume());
 
-            if (m_src.at(i) == ';') {
+            if (buf == ";") {
                 tokens.push_back({.type = TokenType::semi});
             } else {
-                std::cerr << "INVALID TOKEN!" << std::endl;
+                std::cerr << "INVALID TOKEN! " << buf << std::endl;
                 // exits with error code 1
                 exit(1);
             }
 
-        } else if(std::isspace(start)) {
+        } else if(std::isspace(peek().value())) {
             // handle spaces etc.
+            consume();
         } else {
-            std::cerr << "INVALID CHARACTER!" << std::endl;
+            std::cerr << "INVALID CHARACTER! " << peek().value() << std::endl;
             // exits with error code 1
             exit(1);
         }
@@ -68,4 +62,18 @@ std::vector<Token> Tokeniser::tokenise() {
     return tokens;
     
 }
+
+std::optional<char> Tokeniser::peek(int ahead) const {
+        if (m_index + ahead >= m_src.length()) {
+            return {};
+        } else {
+            return m_src.at(m_index + ahead);
+        }
+    }
+
+char Tokeniser::consume() {
+        char cur = m_src.at(m_index);
+        m_index++;
+        return cur;
+    }
 

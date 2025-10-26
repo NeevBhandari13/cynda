@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     std::string code_str = buffer.str();
     input.close();
 
-    Tokeniser t(code_str);
+    Tokeniser t(std::move(code_str));
     std::vector<Token> tokens = t.tokenise();
 
     std::cout << "Finished" << std::endl;

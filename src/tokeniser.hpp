@@ -24,4 +24,11 @@ public:
 
 private:
     const std::string m_src;
+    int m_index = 0;
+
+    std::optional<char> peek(int ahead = 0) const;
+
+    char consume();
+
+
 };
