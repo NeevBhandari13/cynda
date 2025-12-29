@@ -7,7 +7,9 @@
 enum class TokenType {
     _return,
     int_lit,
-    semi
+    semi,
+    open_curly_brace,
+    close_curly_brace
 };
 
 struct Token {
@@ -26,7 +28,7 @@ private:
     const std::string m_src;
     int m_index = 0;
 
-    std::optional<char> peek(int ahead = 0) const;
+    std::optional<char> peek(int offset = 0) const;
 
     char consume();
 

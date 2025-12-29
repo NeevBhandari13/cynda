@@ -63,11 +63,11 @@ std::vector<Token> Tokeniser::tokenise() {
     
 }
 
-std::optional<char> Tokeniser::peek(int ahead) const {
-        if (m_index + ahead >= m_src.length()) {
+std::optional<char> Tokeniser::peek(int offset) const {
+        if (m_index + offset >= m_src.length()) {
             return {};
         } else {
-            return m_src.at(m_index + ahead);
+            return m_src.at(m_index + offset);
         }
     }
 
